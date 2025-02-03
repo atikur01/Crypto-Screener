@@ -5,7 +5,7 @@ import { rsi } from 'technicalindicators';
 
 const app = express();
 const BINANCE_API_URL = 'https://api.binance.us/api/v3/';
-const port = 5000;
+const port = 3000;
 
 // Temporary storage arrays
 let temp1 = [];
@@ -22,12 +22,12 @@ app.use((req, res, next) => {
     next();
 });
 
-// Fetch all USDT trading pairs
+// Fetch all active USDT trading pairs
 async function getUsdtPairs() {
     try {
         const response = await axios.get(`${BINANCE_API_URL}exchangeInfo`);
         return response.data.symbols
-            .filter(symbol => symbol.quoteAsset === 'USDT')
+            .filter(symbol => symbol.quoteAsset === 'USDT' && symbol.status === 'TRADING')
             .map(pair => pair.symbol);
     } catch (error) {
         console.error('Error fetching USDT pairs:', error);
@@ -39,7 +39,7 @@ async function getUsdtPairs() {
 async function getCandlestickData(pair) {
     try {
         const response = await axios.get(`${BINANCE_API_URL}klines`, {
-            params: { symbol: pair, interval: '1d', limit: 1500 },
+            params: { symbol: pair, interval: '1d', limit: 500 },
         });
         return response.data.map(candle => ({
             close: parseFloat(candle[4]),
@@ -187,26 +187,6 @@ app.get('/', (req, res) => {
     res.send(htmlContent);
 });
 
-
-//Test api....
-app.get('/api/data', (req, res) => {
-    const page = parseInt(req.query.page) || 1; // Default to page 1
-    const limit = parseInt(req.query.limit) || 10; // Default to 10 rows per page
-
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
-
-    const paginatedData = temp2.slice(startIndex, endIndex);
-
-    res.json({
-        data: paginatedData,
-        total: temp2.length,
-        page,
-        limit,
-    });
-});
-
-//....
 
 // Start server
 app.listen(port, () => {
