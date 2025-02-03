@@ -14,6 +14,14 @@ let temp2 = [];
 // Serve static files
 app.use(express.static('public'));
 
+//Allow cors
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');  // Allow all origins (or specify your domain)
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');  // Allow methods
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');  // Allow headers
+    next();
+});
+
 // Fetch all USDT trading pairs
 async function getUsdtPairs() {
     try {
@@ -102,6 +110,9 @@ async function updateData() {
 
 // Schedule data updates every 5 minute
 setInterval(updateData, 5 * 60000);
+
+
+
 
 // Home route - Serve data from temp2
 app.get('/', (req, res) => {
