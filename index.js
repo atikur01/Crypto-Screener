@@ -5,7 +5,7 @@ import { rsi } from 'technicalindicators';
 
 const app = express();
 const BINANCE_API_URL = 'https://api.binance.us/api/v3/';
-const port = 3000;
+const port = 5000;
 
 // Temporary storage arrays
 let temp1 = [];
@@ -100,8 +100,8 @@ async function updateData() {
     console.log('Data updated.');
 }
 
-// Schedule data updates every 1 minute
-setInterval(updateData, 60000);
+// Schedule data updates every 5 minute
+setInterval(updateData, 5 * 60000);
 
 // Home route - Serve data from temp2
 app.get('/', (req, res) => {
@@ -111,32 +111,27 @@ app.get('/', (req, res) => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Binance USDT Pairs RSI</title>
-        <style>
-            body { font-family: Arial, sans-serif; padding: 20px; }
-            h1 { text-align: center; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-            th { background-color: #f4f4f4; }
-            tr:nth-child(even) { background-color: #f9f9f9; }
-            td.overbought { color: red; font-weight: bold; }
-            td.oversold { color: green; font-weight: bold; }
-        </style>
+        <title>Crypto Screener</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+        <!-- DataTables CSS -->
+        <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
     </head>
     <body>
-        <h1>Binance USDT Pairs RSI</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Symbol</th>
-                    <th>Price</th>
-                    <th>24 Hour Change</th>
-                    <th>RSI</th>
-                    <th>RSI Status</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div class="container mt-4">
+            <h1 class="text-center">All USDT Pairs RSI of binance.us</h1>
+            <table id="rsiTable" class="table table-striped table-bordered" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Symbol</th>
+                        <th>Price</th>
+                        <th>24 Hour Change</th>
+                        <th>RSI</th>
+                        <th>RSI Status</th>
+                    </tr>
+                </thead>
+                <tbody>
     `;
 
     temp2.forEach((pair, index) => {
@@ -147,7 +142,7 @@ app.get('/', (req, res) => {
                 <td>${pair.price}</td>
                 <td>${pair.priceChange}</td>
                 <td>${pair.rsi}</td>
-                <td class="${pair.rsiStatus === 'Overbought' ? 'overbought' : pair.rsiStatus === 'Oversold' ? 'oversold' : ''}">
+                <td class="${pair.rsiStatus === 'Overbought' ? 'text-danger font-weight-bold' : pair.rsiStatus === 'Oversold' ? 'text-success font-weight-bold' : ''}">
                     ${pair.rsiStatus}
                 </td>
             </tr>
@@ -155,14 +150,32 @@ app.get('/', (req, res) => {
     });
 
     htmlContent += `
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- jQuery and Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <!-- DataTables JS -->
+        <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('#rsiTable').DataTable({
+                    "paging": true,  // Enable pagination for large datasets
+                    "searching": true, // Enable searching
+                    "lengthChange": false, // Disable length change (optional)
+                });
+            });
+        </script>
     </body>
     </html>
     `;
 
     res.send(htmlContent);
 });
+
 
 // Start server
 app.listen(port, () => {

@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "crypto-screener",
   "version": "1.0.0",
   "description": "binance.us Crypto-Screener",
