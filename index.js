@@ -100,8 +100,8 @@ async function updateData() {
     console.log('Data updated.');
 }
 
-// Schedule data updates every 1 minute
-setInterval(updateData, 60000);
+// Schedule data updates every 5 minute
+setInterval(updateData, 5 * 60000);
 
 // Home route - Serve data from temp2
 app.get('/', (req, res) => {
