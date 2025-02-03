@@ -17,6 +17,3 @@ EXPOSE 3000
 
 # Start the application
 CMD ["node", "index.js"]
-
-# Map port 3000 inside the container to port 80 on the host
-docker run -p 80:3000 crypto-screener
