@@ -172,14 +172,16 @@ app.get('/', (req, res) => {
         <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
         <script>
-            $(document).ready(function() {
-                $('#rsiTable').DataTable({
-                    "paging": true,  // Enable pagination for large datasets
-                    "searching": true, // Enable searching
-                    "lengthChange": false, // Disable length change (optional)
-                });
+        $(document).ready(function() {
+            $('#rsiTable').DataTable({
+            "paging": true,        // Enable pagination
+            "searching": true,     // Enable searching
+            "lengthChange": false, // Disable length change dropdown
+            "pageLength": 500      // Set default number of rows to display
             });
+        });
         </script>
+
     </body>
     </html>
     `;
