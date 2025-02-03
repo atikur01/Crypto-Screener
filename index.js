@@ -177,6 +177,26 @@ app.get('/', (req, res) => {
 });
 
 
+//Test api....
+app.get('/api/data', (req, res) => {
+    const page = parseInt(req.query.page) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit) || 10; // Default to 10 rows per page
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const paginatedData = temp2.slice(startIndex, endIndex);
+
+    res.json({
+        data: paginatedData,
+        total: temp2.length,
+        page,
+        limit,
+    });
+});
+
+//....
+
 // Start server
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
