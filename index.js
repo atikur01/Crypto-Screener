@@ -1,11 +1,17 @@
+
 import express from 'express';
 import axios from 'axios';
 import { rsi } from 'technicalindicators';
 
 const app = express();
 const BINANCE_API_URL = 'https://api.binance.us/api/v3/';
+const port = 3000;
 
-// Serve static files for CSS
+// Temporary storage arrays
+let temp1 = [];
+let temp2 = [];
+
+// Serve static files
 app.use(express.static('public'));
 
 // Fetch all USDT trading pairs
@@ -28,7 +34,7 @@ async function getCandlestickData(pair) {
             params: { symbol: pair, interval: '1d', limit: 1500 },
         });
         return response.data.map(candle => ({
-            close: parseFloat(candle[4]), // Closing price
+            close: parseFloat(candle[4]),
         }));
     } catch (error) {
         console.error(`Error fetching candlestick data for ${pair}:`, error);
@@ -62,24 +68,24 @@ function getRsiStatus(rsiValue) {
     return '';
 }
 
-// Home route
-app.get('/', async (req, res) => {
+// Fetch and update temp1 data
+async function updateData() {
+    console.log('Updating data...');
     const usdtPairs = await getUsdtPairs();
-    const data = [];
+    const newData = [];
 
     for (const pair of usdtPairs) {
         const candlesticks = await getCandlestickData(pair);
-        if (candlesticks.length < 14) continue; // Skip if insufficient data
+        if (candlesticks.length < 14) continue;
 
         const rsiValues = await calculateRSI(candlesticks);
-        const latestRsi = rsiValues[rsiValues.length - 1] || 50; // Default to 50 if undefined
+        const latestRsi = rsiValues[rsiValues.length - 1] || 50;
         const rsiStatus = getRsiStatus(latestRsi);
 
-        // Get the latest price
         const latestPrice = candlesticks[candlesticks.length - 1].close;
         const priceChange = await get24HourPriceChange(pair);
 
-        data.push({
+        newData.push({
             symbol: pair,
             price: `$${latestPrice.toFixed(2)}`,
             priceChange: `${priceChange.toFixed(2)}%`,
@@ -87,8 +93,18 @@ app.get('/', async (req, res) => {
             rsiStatus,
         });
     }
+    temp1 = null;
+    temp1 = newData;
+    temp2 = null;
+    temp2 = [...temp1];
+    console.log('Data updated.');
+}
 
-    // Generate dynamic HTML
+// Schedule data updates every 1 minute
+setInterval(updateData, 60000);
+
+// Home route - Serve data from temp2
+app.get('/', (req, res) => {
     let htmlContent = `
     <!DOCTYPE html>
     <html lang="en">
@@ -123,8 +139,7 @@ app.get('/', async (req, res) => {
             <tbody>
     `;
 
-    // Populate the table
-    data.forEach((pair, index) => {
+    temp2.forEach((pair, index) => {
         htmlContent += `
             <tr>
                 <td>${index + 1}</td>
@@ -150,7 +165,7 @@ app.get('/', async (req, res) => {
 });
 
 // Start server
-const port = 3000;
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
+    updateData(); // Initial data fetch on startup
 });
