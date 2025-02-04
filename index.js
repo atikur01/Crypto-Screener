@@ -101,15 +101,25 @@ async function updateData() {
             rsiStatus,
         });
     }
-    temp1 = null;
-    temp1 = newData;
-    temp2 = null;
-    temp2 = [...temp1];
-    console.log('Data updated.');
+
+    
+
+    if(newData.length > 0){
+        temp1 = null;
+        temp1 = newData;
+    }
+
+
+    if(temp1.length > 0){
+        temp2 = null;
+        temp2 = [...temp1];
+        console.log('Data updated.');
+    }
+    
 }
 
-// Schedule data updates every 5 minute
-setInterval(updateData, 5 * 60000);
+// Schedule data updates every 60 minute
+setInterval(updateData, 60 * 60000);
 
 
 
@@ -177,7 +187,7 @@ app.get('/', (req, res) => {
             "paging": true,        // Enable pagination
             "searching": true,     // Enable searching
             "lengthChange": false, // Disable length change dropdown
-            "pageLength": 500      // Set default number of rows to display
+            "pageLength": 20      // Set default number of rows to display
             });
         });
         </script>
