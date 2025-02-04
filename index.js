@@ -83,40 +83,39 @@ async function updateData() {
     const newData = [];
 
     for (const pair of usdtPairs) {
-        const candlesticks = await getCandlestickData(pair);
-        if (candlesticks.length < 14) continue;
+        await new Promise(resolve => setTimeout(resolve, 100)); // Add delay of 100ms
 
-        const rsiValues = await calculateRSI(candlesticks);
-        const latestRsi = rsiValues[rsiValues.length - 1] || 50;
-        const rsiStatus = getRsiStatus(latestRsi);
+        try {
+            const candlesticks = await getCandlestickData(pair);
+            if (candlesticks.length < 14) continue;
 
-        const latestPrice = candlesticks[candlesticks.length - 1].close;
-        const priceChange = await get24HourPriceChange(pair);
+            const rsiValues = await calculateRSI(candlesticks);
+            const latestRsi = rsiValues[rsiValues.length - 1] || 50;
+            const rsiStatus = getRsiStatus(latestRsi);
 
-        newData.push({
-            symbol: pair,
-            price: `$${latestPrice.toFixed(2)}`,
-            priceChange: `${priceChange.toFixed(2)}%`,
-            rsi: latestRsi.toFixed(2),
-            rsiStatus,
-        });
+            const latestPrice = candlesticks[candlesticks.length - 1].close;
+            const priceChange = await get24HourPriceChange(pair);
+
+            newData.push({
+                symbol: pair,
+                price: `$${latestPrice.toFixed(2)}`,
+                priceChange: `${priceChange.toFixed(2)}%`,
+                rsi: latestRsi.toFixed(2),
+                rsiStatus,
+            });
+        } catch (error) {
+            console.error(`Error processing ${pair}:`, error);
+        }
     }
 
-    
-
-    if(newData.length > 0){
-        temp1 = null;
+    if (newData.length > 0) {
         temp1 = newData;
-    }
-
-
-    if(temp1.length > 0){
-        temp2 = null;
         temp2 = [...temp1];
         console.log('Data updated.');
     }
-    
 }
+
+
 
 // Schedule data updates every 60 minute
 setInterval(updateData, 60 * 60000);
