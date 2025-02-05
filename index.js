@@ -5,11 +5,10 @@ import { rsi } from 'technicalindicators';
 
 const app = express();
 const BINANCE_API_URL = 'https://api.binance.us/api/v3/';
-const port = 3000;
+const port = 5000;
 
-// Temporary storage arrays
-let temp1 = [];
-let temp2 = [];
+// Temporary storage array
+let temp = [];
 
 // Serve static files
 app.use(express.static('public'));
@@ -109,8 +108,7 @@ async function updateData() {
     }
 
     if (newData.length > 0) {
-        temp1 = newData;
-        temp2 = [...temp1];
+        temp = newData;
         console.log('Data updated.');
     }
 }
@@ -154,7 +152,7 @@ app.get('/', (req, res) => {
                 <tbody>
     `;
 
-    temp2.forEach((pair, index) => {
+    temp.forEach((pair, index) => {
         htmlContent += `
             <tr>
                 <td>${index + 1}</td>
