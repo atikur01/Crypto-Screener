@@ -1,11 +1,13 @@
 {
-  
   "type": "module",
   "name": "crypto-screener",
   "version": "1.0.0",
   "description": "binance.us Crypto-Screener",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "build": "echo 'No build step needed'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -13,7 +15,9 @@
     "url": "git+https://github.com/atikur01/Crypto-Screener.git"
   },
   "keywords": [
-    "Crypto-Screener"
+    "Crypto-Screener",
+    "Binance",
+    "Trading"
   ],
   "author": "Atik",
   "license": "ISC",
@@ -24,6 +28,10 @@
   "dependencies": {
     "axios": "^1.7.9",
     "express": "^4.21.2",
-    "technicalindicators": "^3.1.0"
+    "technicalindicators": "^3.1.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
