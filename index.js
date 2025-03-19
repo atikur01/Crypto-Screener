@@ -116,7 +116,7 @@ async function updateData() {
 
 
 // Schedule data updates every 60 minute
-setInterval(updateData, 60 * 60000);
+setInterval(updateData, 60 * 60000*6);
 
 
 
