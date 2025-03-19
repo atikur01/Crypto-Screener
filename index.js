@@ -5,7 +5,7 @@ import { rsi } from 'technicalindicators';
 
 const app = express();
 const BINANCE_API_URL = 'https://api.binance.us/api/v3/';
-const port = 5000;
+const port = 3000;
 
 // Temporary storage array
 let temp = [];
